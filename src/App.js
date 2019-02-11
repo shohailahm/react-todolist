@@ -1,25 +1,57 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import ToDoList from './ToDoList';
+import TodoItems from './ToDoItems';
 import './App.css';
 
 class App extends Component {
+  inputElement = React.createRef()
+  constructor(props){
+    super(props);
+    this.state={
+      items: [],
+      currentItem: {
+        text: '',
+        key: '',
+      },
+    }
+    }
+  
+  addItem=(e)=>{
+    e.preventDefault()
+    const newItem = this.state.currentItem
+    if (newItem.text !== '') {
+      const items = [...this.state.items, newItem]
+      this.setState({
+        items: items,
+        currentItem: { text: '', key: '' },
+      })
+    }
+
+  }
+  deleteItem=(key)=>{
+    debugger
+   let entries=[...this.state.items];
+   let newEntries=entries.filter((i,ind)=>i.key !== key)
+   this.setState({items:newEntries});
+  }
+
+  handleInput=(e)=>{
+    const itemText = e.target.value
+    const currentItem = { text: itemText, key: Date.now() }
+    this.setState({
+      currentItem,
+    })
+  }
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <ToDoList    addItem={this.addItem}
+          inputElement={this.inputElement}
+          handleInput={this.handleInput}
+          currentItem={this.state.currentItem}
+        />
+        <TodoItems entries={this.state.items} deleteItem={this.deleteItem}/>
       </div>
     );
   }
